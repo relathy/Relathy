@@ -1,0 +1,19 @@
+name: relathy_server
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+publish_to: 'none'
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.10.8
+
+# Add regular dependencies here.
+dependencies:
+  # path: ^1.9.0
+  rrf:
+    path: ../rrf
+  relathy_shared:
+    path: ../relathy_shared
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
