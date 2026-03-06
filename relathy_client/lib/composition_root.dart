@@ -5,10 +5,7 @@ import 'package:relathy_client/application_layer/app_module/app_client.dart';
 import 'package:relathy_client/api_layer/app_module/app_client_impl.dart';
 import 'package:relathy_client/generic_layer/presentation/base_view.dart';
 import 'package:relathy_client/presentation_layer/app_module/app_view_model.dart';
-import 'package:relathy_client/presentation_layer/app_module/auth_view.dart';
 import 'package:relathy_client/presentation_layer/shared_module/preferences_model.dart';
-import 'package:relathy_client/presentation_layer/app_module/auth_view_model.dart';
-import 'package:relathy_client/presentation_layer/shared_module/user_model.dart';
 import 'package:relathy_client/presentation_layer/shared_module/theme_model.dart';
 import 'package:relathy_client/generic_layer/presentation/base_view_model.dart';
 import 'package:relathy_client/presentation_layer/app_module/app_view.dart';
@@ -19,11 +16,6 @@ import 'package:rrf/rrf.dart';
 void _registerViews(ServiceCollection services) {
   _registerView(
     services,
-    (s) => AuthViewModel(s.get(), s.get(), s.get(), s.get()),
-    (s, p, f, c) => AuthView(p, f),
-  );
-  _registerView(
-    services,
     (s) => AppViewModel(s.get(), s.get(), s.get(), s.get()),
     (s, p, f, c) => AppView(p, f),
   );
@@ -31,7 +23,6 @@ void _registerViews(ServiceCollection services) {
 
 void _registerModels(ServiceCollection services) {
   services.addSingleton<PreferencesModel>((s) => NullPreferencesModelImpl());
-  services.addSingleton<UserModel>((s) => UserModel(s.get(), s.get()));
   services.addSingleton<ThemeModel>((s) => ThemeModel(s.get()));
 }
 

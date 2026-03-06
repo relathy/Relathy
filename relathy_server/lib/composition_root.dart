@@ -2,14 +2,10 @@ import 'package:dart_dependency_injection/dart_dependency_injection.dart';
 import 'package:relathy_server/api_layer/app_module/app_server_impl.dart';
 import 'package:relathy_server/application_layer/app_module/app_server.dart';
 import 'package:relathy_server/application_layer/app_module/repositories/application_info_repository.dart';
-import 'package:relathy_server/application_layer/app_module/use_cases/handlers/auth_handlers.dart';
-import 'package:relathy_server/application_layer/core_module/use_cases/handlers/account_handlers.dart';
 import 'package:relathy_server/application_layer/app_module/app_server_impl.dart';
 import 'package:relathy_server/application_layer/app_module/use_cases/app_initializer.dart';
 import 'package:relathy_server/persistence_layer_in_memory/app_module/application_info_repository_impl.dart';
 import 'package:relathy_shared/application_layer/app_module/app_json_converter_factory.dart';
-import 'package:relathy_shared/application_layer/core_module/messages/account.dart';
-import 'package:relathy_shared/application_layer/app_module/messages/auth.dart';
 import 'package:rrf/rrf_server.dart';
 import 'package:rrf/rrf_server_impl.dart';
 import 'package:rrf/rrf.dart';
@@ -30,11 +26,7 @@ void _registerTypes(ServiceCollection services) {
   services.add<List<MiddlewareExecutor>>((s) => List.unmodifiable([]));
 }
 
-void _addHandlers(ServiceCollection services) {
-  services.add<Handler<AuthSendOtp>>((s) => AuthSendOtpHandler());
-  services.add<Handler<AuthVerifyOtp>>((s) => AuthVerifyOtpHandler(s.get(), s.get()));
-  services.add<Handler<CreateAccount>>((s) => CreateAccountHandler());
-}
+void _addHandlers(ServiceCollection services) {}
 
 class BackendCompositionRoot {
   late final ServiceProvider _serviceProvider;

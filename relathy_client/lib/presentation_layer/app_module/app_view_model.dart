@@ -1,9 +1,8 @@
 import 'package:mobx/mobx.dart';
-import 'package:relathy_client/presentation_layer/app_module/auth_view_model.dart';
-import 'package:relathy_client/presentation_layer/shared_module/user_model.dart';
 import 'package:relathy_client/presentation_layer/shared_module/theme_model.dart';
 import 'package:relathy_client/generic_layer/presentation/base_view_model.dart';
 import 'package:relathy_client/presentation_layer/shared_module/preferences_model.dart';
+import 'package:relathy_client/presentation_layer/shared_module/user_model.dart';
 import 'package:relathy_shared/generic_layer/result/result.dart';
 
 part 'app_view_model.g.dart';
@@ -28,8 +27,6 @@ abstract class AppViewModelBase extends FutureLoadingViewModelBase<AppViewModel,
 
   @computed
   ViewModel get childViewModel {
-    return isAuthenticated
-        ? createViewModel<AuthViewModel, EmptyViewProps>(props) //todo: change to main view model
-        : createViewModel<AuthViewModel, EmptyViewProps>(props);
+    throw UnimplementedError();
   }
 }
