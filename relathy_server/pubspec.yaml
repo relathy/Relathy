@@ -13,7 +13,17 @@ dependencies:
   rrf:
     path: ../rrf
   relathy_shared:
-    path: ../relathy_shared
+    path: ../relathy_shared 
+  rrf_server_web_sockets:
+    path: ../rrf_server_web_sockets 
+  intl: ^0.20.2
+  dart_dependency_injection: ^1.2.0
+  json_annotation: ^4.9.0
+  freezed_annotation: ^3.1.0
+  meta: ^1.17.0
+
 dev_dependencies:
   lints: ^6.0.0
   test: ^1.25.6
+  build_runner: ^2.10.4
+  json_serializable: ^6.9.5 

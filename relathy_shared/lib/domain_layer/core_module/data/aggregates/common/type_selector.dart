@@ -1,0 +1,10 @@
+import 'package:meta/meta.dart';
+import 'package:relathy_shared/domain_layer/core_module/data/aggregates/common/display_name.dart';
+import 'package:relathy_shared/domain_layer/core_module/data/aggregates/aggregate.dart';
+
+@immutable
+class TypeSelector implements Aggregate {
+  final List<DisplayName> displayNames;
+
+  TypeSelector({required this.displayNames});
+}
