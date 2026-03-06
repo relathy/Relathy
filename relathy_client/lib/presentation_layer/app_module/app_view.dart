@@ -1,8 +1,6 @@
-import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:relathy_client/generic_layer/presentation/base_view.dart';
-import 'package:relathy_client/generic_layer/presentation/base_view_model.dart';
 import 'package:relathy_client/presentation_layer/app_module/app_view_model.dart';
 import 'package:relathy_shared/generic_layer/result/result.dart';
 
@@ -19,8 +17,6 @@ class AppView extends StatelessViewWidget<AppViewModel> {
           title: 'Webverse',
           debugShowCheckedModeBanner: false,
           themeMode: mode,
-          localizationsDelegates: const [AppFlowyEditorLocalizations.delegate],
-          supportedLocales: AppFlowyEditorLocalizations.delegate.supportedLocales,
           theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
           darkTheme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true, brightness: Brightness.dark),
           home: Observer(
