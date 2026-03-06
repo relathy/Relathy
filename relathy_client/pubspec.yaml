@@ -11,8 +11,6 @@ dependencies:
     sdk: flutter
   rrf:
     path: ../rrf
-  rrf_client_web_sockets:
-    path: ../rrf_client_web_sockets
   relathy_shared:
     path: ../relathy_shared
   relathy_server:
@@ -35,6 +33,6 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   mobx_codegen: ^2.7.4
-  
+
 flutter:
   uses-material-design: true

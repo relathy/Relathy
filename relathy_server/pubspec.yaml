@@ -14,8 +14,6 @@ dependencies:
     path: ../rrf
   relathy_shared:
     path: ../relathy_shared 
-  rrf_server_web_sockets:
-    path: ../rrf_server_web_sockets 
   intl: ^0.20.2
   dart_dependency_injection: ^1.2.0
   json_annotation: ^4.9.0

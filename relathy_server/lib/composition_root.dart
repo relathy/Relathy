@@ -1,5 +1,4 @@
 import 'package:dart_dependency_injection/dart_dependency_injection.dart';
-import 'package:relathy_server/api_layer/app_module/app_server_impl.dart';
 import 'package:relathy_server/application_layer/app_module/app_server.dart';
 import 'package:relathy_server/application_layer/app_module/repositories/application_info_repository.dart';
 import 'package:relathy_server/application_layer/app_module/app_server_impl.dart';
@@ -20,9 +19,6 @@ void _registerTypes(ServiceCollection services) {
   services.add<AppInitializer>((s) => AppInitializer(s.get()));
   services.addSingleton<AppServer>((s) => AppServerImpl(s.get(), s.get()));
   services.addSingleton<Executor>((s) => s.get<AppServer>());
-  services.addSingleton<WebSocketAppServer>(
-    (s) => WebSocketAppServer(s.get(), s.get(), address: 'localhost', port: 5000),
-  );
   services.add<List<MiddlewareExecutor>>((s) => List.unmodifiable([]));
 }
 
@@ -38,10 +34,6 @@ class BackendCompositionRoot {
 
   AppServer getAppServer() {
     return _serviceProvider.get<AppServer>();
-  }
-
-  WebSocketAppServer getWebSocketAppServer() {
-    return _serviceProvider.get<WebSocketAppServer>();
   }
 }
 

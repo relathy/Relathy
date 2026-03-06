@@ -33,9 +33,7 @@ void _registerTypes(ServiceCollection services, {bool isLocal = false}) {
   if (isLocal) {
     services.addSingleton<AppClient>((s) => LocalAppClientImpl(s.get()));
   } else {
-    services.addSingleton<AppClient>(
-      (s) => WebSocketAppClient(Uri.parse("ws://localhost:5000/ws/"), s.get()),
-    );
+    throw UnimplementedError("remote client not implemented");
   }
 
   services.addSingleton<DateTimeService>((s) => DateTimeServiceImpl());
