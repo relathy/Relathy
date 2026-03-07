@@ -1,4 +1,3 @@
-// lib/src/immutable_mutable_generator.dart
 import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
@@ -10,10 +9,7 @@ import 'package:source_gen/source_gen.dart';
 import 'immutable_mutable.dart';
 
 class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutableMutable> {
-  static final _annotationChecker = TypeChecker.typeNamed(
-    GenerateImmutableMutable,
-    inPackage: 'relathy_shared',
-  );
+  static final _annotationChecker = TypeChecker.typeNamedLiterally('GenerateImmutableMutable');
 
   @override
   FutureOr<String> generateForAnnotatedElement(
@@ -131,7 +127,11 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
 
     out.writeln('  $mutableName({');
     for (final field in fields) {
-      out.writeln('    required ${_mutableCtorParamType(field.type)} ${field.name},');
+      if (_needsCustomMutableInitializer(field.type)) {
+        out.writeln('    ${_mutableCtorParamType(field.type)} ${field.name},');
+      } else {
+        out.writeln('    required this.${field.name},');
+      }
     }
     out.writeln('  })${_mutableInitializers(fields)};');
     out.writeln();
@@ -147,6 +147,11 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
     return out.toString();
   }
 
+  bool _needsCustomMutableInitializer(DartType type) {
+    final shape = _mutableShape(type);
+    return shape.kind == _TypeKind.list || shape.kind == _TypeKind.map;
+  }
+
   String _mutableInitializers(List<_FieldInfo> fields) {
     final parts = <String>[];
 
@@ -156,8 +161,6 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
         parts.add('${field.name} = ArgsHelper.toMutableList(${field.name})');
       } else if (shape.kind == _TypeKind.map) {
         parts.add('${field.name} = ArgsHelper.toMutableMap(${field.name})');
-      } else {
-        parts.add('this.${field.name} = ${field.name}');
       }
     }
 
@@ -176,10 +179,10 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
     final shape = _mutableShape(type);
 
     if (shape.kind == _TypeKind.list) {
-      return 'Iterable<${shape.args.single.render()}>' + (shape.isNullable ? '?' : '');
+      return 'Iterable<${shape.args.single.render()}>?';
     }
     if (shape.kind == _TypeKind.map) {
-      return 'Map<${shape.args[0].render()}, ${shape.args[1].render()}>' + (shape.isNullable ? '?' : '');
+      return 'Map<${shape.args[0].render()}, ${shape.args[1].render()}>?';
     }
     return shape.render();
   }
@@ -356,7 +359,25 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
   String _immutableToMutableExpr(_ResolvedType type, String sourceExpr) {
     if (type.isNullable) {
       final nonNull = type.nonNullable();
-      return '$sourceExpr == null ? null : ${_immutableToMutableExpr(nonNull, sourceExpr)}';
+
+      if (nonNull.kind == _TypeKind.map) {
+        final keyType = nonNull.args[0];
+        final valueType = nonNull.args[1];
+        return '$sourceExpr?.mapToPlainMap('
+            '(k, v) => MapEntry('
+            '${_immutableNestedToMutable(keyType, 'k')}, '
+            '${_immutableNestedToMutable(valueType, 'v')}'
+            '))';
+      }
+
+      if (nonNull.kind == _TypeKind.list) {
+        final itemType = nonNull.args.single;
+        return '$sourceExpr?.mapToMutableList((x) => ${_immutableNestedToMutable(itemType, 'x')})';
+      }
+
+      if (_isGeneratedImmutable(nonNull)) return '$sourceExpr?.toMutable()';
+
+      return sourceExpr;
     }
 
     if (type.kind == _TypeKind.map) {
@@ -381,7 +402,25 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
   String _mutableToImmutableExpr(_ResolvedType type, String sourceExpr) {
     if (type.isNullable) {
       final nonNull = type.nonNullable();
-      return '$sourceExpr == null ? null : ${_mutableToImmutableExpr(nonNull, sourceExpr)}';
+
+      if (nonNull.kind == _TypeKind.map) {
+        final keyType = nonNull.args[0];
+        final valueType = nonNull.args[1];
+        return '$sourceExpr == null ? null : ImmutableMap.of('
+            '$sourceExpr.map((k, v) => MapEntry('
+            '${_mutableNestedToImmutable(keyType, 'k')}, '
+            '${_mutableNestedToImmutable(valueType, 'v')}'
+            ')))';
+      }
+
+      if (nonNull.kind == _TypeKind.list) {
+        final itemType = nonNull.args.single;
+        return '$sourceExpr?.mapToImmutableList((x) => ${_mutableNestedToImmutable(itemType, 'x')})';
+      }
+
+      if (_isGeneratedMutable(nonNull)) return '$sourceExpr?.toImmutable()';
+
+      return sourceExpr;
     }
 
     if (type.kind == _TypeKind.map) {
@@ -414,9 +453,13 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
   }
 
   bool _isString(_ResolvedType type) => type.baseName == 'String';
+
   bool _isBool(_ResolvedType type) => type.baseName == 'bool';
+
   bool _isInt(_ResolvedType type) => type.baseName == 'int';
+
   bool _isDouble(_ResolvedType type) => type.baseName == 'double';
+
   bool _isDateTime(_ResolvedType type) => type.baseName == 'DateTime';
 
   bool _isEnum(_ResolvedType type) {

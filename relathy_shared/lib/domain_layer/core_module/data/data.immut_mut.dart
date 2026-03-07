@@ -72,11 +72,10 @@ class MutableRelathyData implements RelathyData {
   final MutableMap<RelationshipId, MutableRelationshipData> relationshipMap;
 
   MutableRelathyData({
-    required UserId currentUserId,
-    required Map<UserId, MutableUserData> userMap,
-    required Map<RelationshipId, MutableRelationshipData> relationshipMap,
-  }) : this.currentUserId = currentUserId,
-       userMap = ArgsHelper.toMutableMap(userMap),
+    required this.currentUserId,
+    Map<UserId, MutableUserData>? userMap,
+    Map<RelationshipId, MutableRelationshipData>? relationshipMap,
+  }) : userMap = ArgsHelper.toMutableMap(userMap),
        relationshipMap = ArgsHelper.toMutableMap(relationshipMap);
 
   ImmutableRelathyData toImmutable() => ImmutableRelathyData(
@@ -136,7 +135,7 @@ class ImmutableUserData implements UserData {
   MutableUserData toMutable() => MutableUserData(
     userId: userId,
     displayName: displayName,
-    avatarUrl: avatarUrl == null ? null : avatarUrl,
+    avatarUrl: avatarUrl,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
@@ -159,21 +158,17 @@ class MutableUserData implements UserData {
   DateTime updatedAt;
 
   MutableUserData({
-    required UserId userId,
-    required String displayName,
-    required String? avatarUrl,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : this.userId = userId,
-       this.displayName = displayName,
-       this.avatarUrl = avatarUrl,
-       this.createdAt = createdAt,
-       this.updatedAt = updatedAt;
+    required this.userId,
+    required this.displayName,
+    required this.avatarUrl,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
   ImmutableUserData toImmutable() => ImmutableUserData(
     userId: userId,
     displayName: displayName,
-    avatarUrl: avatarUrl == null ? null : avatarUrl,
+    avatarUrl: avatarUrl,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
@@ -289,8 +284,8 @@ class ImmutableRelationshipData implements RelationshipData {
     relationshipId: relationshipId,
     kind: kind,
     status: status,
-    title: title == null ? null : title,
-    description: description == null ? null : description,
+    title: title,
+    description: description,
     createdByUserId: createdByUserId,
     createdAt: createdAt,
     updatedAt: updatedAt,
@@ -337,26 +332,18 @@ class MutableRelationshipData implements RelationshipData {
   final MutableMap<RequestId, MutableRequestData> requestMap;
 
   MutableRelationshipData({
-    required RelationshipId relationshipId,
-    required RelationshipKind kind,
-    required RelationshipStatus status,
-    required String? title,
-    required String? description,
-    required UserId createdByUserId,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    required Map<MemberId, MutableRelationshipMemberData> memberMap,
-    required Map<AgreementId, MutableAgreementData> agreementMap,
-    required Map<RequestId, MutableRequestData> requestMap,
-  }) : this.relationshipId = relationshipId,
-       this.kind = kind,
-       this.status = status,
-       this.title = title,
-       this.description = description,
-       this.createdByUserId = createdByUserId,
-       this.createdAt = createdAt,
-       this.updatedAt = updatedAt,
-       memberMap = ArgsHelper.toMutableMap(memberMap),
+    required this.relationshipId,
+    required this.kind,
+    required this.status,
+    required this.title,
+    required this.description,
+    required this.createdByUserId,
+    required this.createdAt,
+    required this.updatedAt,
+    Map<MemberId, MutableRelationshipMemberData>? memberMap,
+    Map<AgreementId, MutableAgreementData>? agreementMap,
+    Map<RequestId, MutableRequestData>? requestMap,
+  }) : memberMap = ArgsHelper.toMutableMap(memberMap),
        agreementMap = ArgsHelper.toMutableMap(agreementMap),
        requestMap = ArgsHelper.toMutableMap(requestMap);
 
@@ -364,8 +351,8 @@ class MutableRelationshipData implements RelationshipData {
     relationshipId: relationshipId,
     kind: kind,
     status: status,
-    title: title == null ? null : title,
-    description: description == null ? null : description,
+    title: title,
+    description: description,
     createdByUserId: createdByUserId,
     createdAt: createdAt,
     updatedAt: updatedAt,
@@ -479,10 +466,10 @@ class ImmutableRelationshipMemberData implements RelationshipMemberData {
     userId: userId,
     status: status,
     role: role,
-    invitedByUserId: invitedByUserId == null ? null : invitedByUserId,
+    invitedByUserId: invitedByUserId,
     invitedAt: invitedAt,
-    respondedAt: respondedAt == null ? null : respondedAt,
-    joinedAt: joinedAt == null ? null : joinedAt,
+    respondedAt: respondedAt,
+    joinedAt: joinedAt,
     essentialMap: essentialMap.mapToPlainMap(
       (k, v) => MapEntry(k, v.toMutable()),
     ),
@@ -524,25 +511,17 @@ class MutableRelationshipMemberData implements RelationshipMemberData {
   final MutableMap<PreferenceId, MutablePreferenceData> preferenceMap;
 
   MutableRelationshipMemberData({
-    required MemberId memberId,
-    required UserId userId,
-    required MembershipStatus status,
-    required MemberRole role,
-    required UserId? invitedByUserId,
-    required DateTime invitedAt,
-    required DateTime? respondedAt,
-    required DateTime? joinedAt,
-    required Map<EssentialId, MutableEssentialData> essentialMap,
-    required Map<PreferenceId, MutablePreferenceData> preferenceMap,
-  }) : this.memberId = memberId,
-       this.userId = userId,
-       this.status = status,
-       this.role = role,
-       this.invitedByUserId = invitedByUserId,
-       this.invitedAt = invitedAt,
-       this.respondedAt = respondedAt,
-       this.joinedAt = joinedAt,
-       essentialMap = ArgsHelper.toMutableMap(essentialMap),
+    required this.memberId,
+    required this.userId,
+    required this.status,
+    required this.role,
+    required this.invitedByUserId,
+    required this.invitedAt,
+    required this.respondedAt,
+    required this.joinedAt,
+    Map<EssentialId, MutableEssentialData>? essentialMap,
+    Map<PreferenceId, MutablePreferenceData>? preferenceMap,
+  }) : essentialMap = ArgsHelper.toMutableMap(essentialMap),
        preferenceMap = ArgsHelper.toMutableMap(preferenceMap);
 
   ImmutableRelationshipMemberData toImmutable() =>
@@ -551,10 +530,10 @@ class MutableRelationshipMemberData implements RelationshipMemberData {
         userId: userId,
         status: status,
         role: role,
-        invitedByUserId: invitedByUserId == null ? null : invitedByUserId,
+        invitedByUserId: invitedByUserId,
         invitedAt: invitedAt,
-        respondedAt: respondedAt == null ? null : respondedAt,
-        joinedAt: joinedAt == null ? null : joinedAt,
+        respondedAt: respondedAt,
+        joinedAt: joinedAt,
         essentialMap: ImmutableMap.of(
           essentialMap.map((k, v) => MapEntry(k, v.toImmutable())),
         ),
@@ -629,9 +608,9 @@ class ImmutableEssentialData implements EssentialData {
 
   MutableEssentialData toMutable() => MutableEssentialData(
     essentialId: essentialId,
-    parentEssentialId: parentEssentialId == null ? null : parentEssentialId,
+    parentEssentialId: parentEssentialId,
     title: title,
-    description: description == null ? null : description,
+    description: description,
     isBoundary: isBoundary,
     sortOrder: sortOrder,
     createdAt: createdAt,
@@ -665,28 +644,21 @@ class MutableEssentialData implements EssentialData {
   DateTime updatedAt;
 
   MutableEssentialData({
-    required EssentialId essentialId,
-    required EssentialId? parentEssentialId,
-    required String title,
-    required String? description,
-    required bool isBoundary,
-    required int sortOrder,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : this.essentialId = essentialId,
-       this.parentEssentialId = parentEssentialId,
-       this.title = title,
-       this.description = description,
-       this.isBoundary = isBoundary,
-       this.sortOrder = sortOrder,
-       this.createdAt = createdAt,
-       this.updatedAt = updatedAt;
+    required this.essentialId,
+    required this.parentEssentialId,
+    required this.title,
+    required this.description,
+    required this.isBoundary,
+    required this.sortOrder,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
   ImmutableEssentialData toImmutable() => ImmutableEssentialData(
     essentialId: essentialId,
-    parentEssentialId: parentEssentialId == null ? null : parentEssentialId,
+    parentEssentialId: parentEssentialId,
     title: title,
-    description: description == null ? null : description,
+    description: description,
     isBoundary: isBoundary,
     sortOrder: sortOrder,
     createdAt: createdAt,
@@ -752,8 +724,8 @@ class ImmutablePreferenceData implements PreferenceData {
   MutablePreferenceData toMutable() => MutablePreferenceData(
     preferenceId: preferenceId,
     title: title,
-    description: description == null ? null : description,
-    category: category == null ? null : category,
+    description: description,
+    category: category,
     sortOrder: sortOrder,
     createdAt: createdAt,
     updatedAt: updatedAt,
@@ -783,26 +755,20 @@ class MutablePreferenceData implements PreferenceData {
   DateTime updatedAt;
 
   MutablePreferenceData({
-    required PreferenceId preferenceId,
-    required String title,
-    required String? description,
-    required String? category,
-    required int sortOrder,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : this.preferenceId = preferenceId,
-       this.title = title,
-       this.description = description,
-       this.category = category,
-       this.sortOrder = sortOrder,
-       this.createdAt = createdAt,
-       this.updatedAt = updatedAt;
+    required this.preferenceId,
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.sortOrder,
+    required this.createdAt,
+    required this.updatedAt,
+  });
 
   ImmutablePreferenceData toImmutable() => ImmutablePreferenceData(
     preferenceId: preferenceId,
     title: title,
-    description: description == null ? null : description,
-    category: category == null ? null : category,
+    description: description,
+    category: category,
     sortOrder: sortOrder,
     createdAt: createdAt,
     updatedAt: updatedAt,
@@ -885,7 +851,7 @@ class ImmutableAgreementData implements AgreementData {
   MutableAgreementData toMutable() => MutableAgreementData(
     agreementId: agreementId,
     title: title,
-    description: description == null ? null : description,
+    description: description,
     status: status,
     createdByMemberId: createdByMemberId,
     createdAt: createdAt,
@@ -922,27 +888,20 @@ class MutableAgreementData implements AgreementData {
   final MutableMap<MemberId, MutableAgreementMemberDecisionData> decisionMap;
 
   MutableAgreementData({
-    required AgreementId agreementId,
-    required String title,
-    required String? description,
-    required AgreementStatus status,
-    required MemberId createdByMemberId,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    required Map<MemberId, MutableAgreementMemberDecisionData> decisionMap,
-  }) : this.agreementId = agreementId,
-       this.title = title,
-       this.description = description,
-       this.status = status,
-       this.createdByMemberId = createdByMemberId,
-       this.createdAt = createdAt,
-       this.updatedAt = updatedAt,
-       decisionMap = ArgsHelper.toMutableMap(decisionMap);
+    required this.agreementId,
+    required this.title,
+    required this.description,
+    required this.status,
+    required this.createdByMemberId,
+    required this.createdAt,
+    required this.updatedAt,
+    Map<MemberId, MutableAgreementMemberDecisionData>? decisionMap,
+  }) : decisionMap = ArgsHelper.toMutableMap(decisionMap);
 
   ImmutableAgreementData toImmutable() => ImmutableAgreementData(
     agreementId: agreementId,
     title: title,
-    description: description == null ? null : description,
+    description: description,
     status: status,
     createdByMemberId: createdByMemberId,
     createdAt: createdAt,
@@ -996,8 +955,8 @@ class ImmutableAgreementMemberDecisionData
       MutableAgreementMemberDecisionData(
         memberId: memberId,
         decision: decision,
-        note: note == null ? null : note,
-        decidedAt: decidedAt == null ? null : decidedAt,
+        note: note,
+        decidedAt: decidedAt,
       );
 }
 
@@ -1016,21 +975,18 @@ class MutableAgreementMemberDecisionData
   DateTime? decidedAt;
 
   MutableAgreementMemberDecisionData({
-    required MemberId memberId,
-    required AgreementDecisionStatus decision,
-    required String? note,
-    required DateTime? decidedAt,
-  }) : this.memberId = memberId,
-       this.decision = decision,
-       this.note = note,
-       this.decidedAt = decidedAt;
+    required this.memberId,
+    required this.decision,
+    required this.note,
+    required this.decidedAt,
+  });
 
   ImmutableAgreementMemberDecisionData toImmutable() =>
       ImmutableAgreementMemberDecisionData(
         memberId: memberId,
         decision: decision,
-        note: note == null ? null : note,
-        decidedAt: decidedAt == null ? null : decidedAt,
+        note: note,
+        decidedAt: decidedAt,
       );
 }
 
@@ -1144,10 +1100,10 @@ class ImmutableRequestData implements RequestData {
     status: status,
     priority: priority,
     targetMemberIds: targetMemberIds.mapToMutableList((x) => x),
-    relatedAgreementId: relatedAgreementId == null ? null : relatedAgreementId,
-    relatedEssentialId: relatedEssentialId == null ? null : relatedEssentialId,
-    dueAt: dueAt == null ? null : dueAt,
-    resolvedAt: resolvedAt == null ? null : resolvedAt,
+    relatedAgreementId: relatedAgreementId,
+    relatedEssentialId: relatedEssentialId,
+    dueAt: dueAt,
+    resolvedAt: resolvedAt,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
@@ -1194,32 +1150,20 @@ class MutableRequestData implements RequestData {
   DateTime updatedAt;
 
   MutableRequestData({
-    required RequestId requestId,
-    required MemberId createdByMemberId,
-    required String title,
-    required String description,
-    required RequestStatus status,
-    required RequestPriority priority,
-    required Iterable<MemberId> targetMemberIds,
-    required AgreementId? relatedAgreementId,
-    required EssentialId? relatedEssentialId,
-    required DateTime? dueAt,
-    required DateTime? resolvedAt,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-  }) : this.requestId = requestId,
-       this.createdByMemberId = createdByMemberId,
-       this.title = title,
-       this.description = description,
-       this.status = status,
-       this.priority = priority,
-       targetMemberIds = ArgsHelper.toMutableList(targetMemberIds),
-       this.relatedAgreementId = relatedAgreementId,
-       this.relatedEssentialId = relatedEssentialId,
-       this.dueAt = dueAt,
-       this.resolvedAt = resolvedAt,
-       this.createdAt = createdAt,
-       this.updatedAt = updatedAt;
+    required this.requestId,
+    required this.createdByMemberId,
+    required this.title,
+    required this.description,
+    required this.status,
+    required this.priority,
+    Iterable<MemberId>? targetMemberIds,
+    required this.relatedAgreementId,
+    required this.relatedEssentialId,
+    required this.dueAt,
+    required this.resolvedAt,
+    required this.createdAt,
+    required this.updatedAt,
+  }) : targetMemberIds = ArgsHelper.toMutableList(targetMemberIds);
 
   ImmutableRequestData toImmutable() => ImmutableRequestData(
     requestId: requestId,
@@ -1229,10 +1173,10 @@ class MutableRequestData implements RequestData {
     status: status,
     priority: priority,
     targetMemberIds: targetMemberIds.mapToImmutableList((x) => x),
-    relatedAgreementId: relatedAgreementId == null ? null : relatedAgreementId,
-    relatedEssentialId: relatedEssentialId == null ? null : relatedEssentialId,
-    dueAt: dueAt == null ? null : dueAt,
-    resolvedAt: resolvedAt == null ? null : resolvedAt,
+    relatedAgreementId: relatedAgreementId,
+    relatedEssentialId: relatedEssentialId,
+    dueAt: dueAt,
+    resolvedAt: resolvedAt,
     createdAt: createdAt,
     updatedAt: updatedAt,
   );
