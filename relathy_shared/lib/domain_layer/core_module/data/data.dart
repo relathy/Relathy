@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mobx/mobx.dart';
 import 'package:relathy_shared/codegen/immutable_mutable.dart';
 import 'package:relathy_shared/generic_layer/collection/mutation.dart';
 import 'package:relathy_shared/generic_layer/uuid/uuid.dart';
@@ -24,6 +25,7 @@ enum RequestPriority { low, normal, high, urgent }
 
 @GenerateImmutableMutable()
 abstract interface class RelathyData {
+  @immutableField
   UserId get currentUserId;
 
   ReadOnlyMap<UserId, UserData> get userMap;
@@ -33,6 +35,7 @@ abstract interface class RelathyData {
 
 @GenerateImmutableMutable()
 abstract interface class UserData {
+  @immutableField
   UserId get userId;
 
   String get displayName;
@@ -46,6 +49,7 @@ abstract interface class UserData {
 
 @GenerateImmutableMutable()
 abstract interface class RelationshipData {
+  @immutableField
   RelationshipId get relationshipId;
 
   RelationshipKind get kind;
@@ -56,6 +60,7 @@ abstract interface class RelationshipData {
 
   String? get description;
 
+  @immutableField
   UserId get createdByUserId;
 
   DateTime get createdAt;
@@ -71,14 +76,17 @@ abstract interface class RelationshipData {
 
 @GenerateImmutableMutable()
 abstract interface class RelationshipMemberData {
+  @immutableField
   MemberId get memberId;
 
+  @immutableField
   UserId get userId;
 
   MembershipStatus get status;
 
   MemberRole get role;
 
+  @immutableField
   UserId? get invitedByUserId;
 
   DateTime get invitedAt;
@@ -94,8 +102,10 @@ abstract interface class RelationshipMemberData {
 
 @GenerateImmutableMutable()
 abstract interface class EssentialData {
+  @immutableField
   EssentialId get essentialId;
 
+  @immutableField
   EssentialId? get parentEssentialId;
 
   String get title;
@@ -113,6 +123,7 @@ abstract interface class EssentialData {
 
 @GenerateImmutableMutable()
 abstract interface class PreferenceData {
+  @immutableField
   PreferenceId get preferenceId;
 
   String get title;
@@ -130,6 +141,7 @@ abstract interface class PreferenceData {
 
 @GenerateImmutableMutable()
 abstract interface class AgreementData {
+  @immutableField
   AgreementId get agreementId;
 
   String get title;
@@ -138,6 +150,7 @@ abstract interface class AgreementData {
 
   AgreementStatus get status;
 
+  @immutableField
   MemberId get createdByMemberId;
 
   DateTime get createdAt;
@@ -149,6 +162,7 @@ abstract interface class AgreementData {
 
 @GenerateImmutableMutable()
 abstract interface class AgreementMemberDecisionData {
+  @immutableField
   MemberId get memberId;
 
   AgreementDecisionStatus get decision;
@@ -160,8 +174,10 @@ abstract interface class AgreementMemberDecisionData {
 
 @GenerateImmutableMutable()
 abstract interface class RequestData {
+  @immutableField
   RequestId get requestId;
 
+  @immutableField
   MemberId get createdByMemberId;
 
   String get title;
@@ -174,8 +190,10 @@ abstract interface class RequestData {
 
   ReadOnlyList<MemberId> get targetMemberIds;
 
+  @immutableField
   AgreementId? get relatedAgreementId;
 
+  @immutableField
   EssentialId? get relatedEssentialId;
 
   DateTime? get dueAt;

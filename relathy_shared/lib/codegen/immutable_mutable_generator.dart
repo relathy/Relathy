@@ -41,7 +41,13 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
         .toList();
 
     final fields = getters
-        .map((getter) => _FieldInfo(name: getter.displayName, type: getter.returnType))
+        .map(
+          (getter) => _FieldInfo(
+            name: getter.displayName,
+            type: getter.returnType,
+            isImmutableField: _hasImmutableFieldAnnotation(getter),
+          ),
+        )
         .toList();
 
     final out = StringBuffer();
@@ -57,6 +63,14 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
     return name == 'hashCode' || name == 'runtimeType';
   }
 
+  bool _hasImmutableFieldAnnotation(PropertyAccessorElement getter) {
+    return getter.metadata.annotations.any((meta) {
+      final value = meta.computeConstantValue();
+      final typeName = value?.type?.getDisplayString();
+      return typeName == 'ImmutableField';
+    });
+  }
+
   String _generateImmutable(
     String interfaceName,
     String immutableName,
@@ -65,6 +79,7 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
   ) {
     final out = StringBuffer();
 
+    out.writeln('@immutable');
     out.writeln('class $immutableName implements $interfaceName {');
 
     for (final field in fields) {
@@ -98,7 +113,7 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
 
     out.writeln('  $mutableName toMutable() => $mutableName(');
     for (final field in fields) {
-      out.writeln('    ${field.name}: ${_immutableToMutableExpr(_immutableShape(field.type), field.name)},');
+      out.writeln('    ${field.name}: ${_immutableToMutableExprForField(field, field.name)},');
     }
     out.writeln('  );');
 
@@ -118,17 +133,27 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
     out.writeln('class $mutableName implements $interfaceName {');
 
     for (final field in fields) {
-      final fieldType = _mutableFieldType(field.type);
-      final isFinal = _isAlwaysFinal(field.type, field.name);
-      out.writeln('  @override');
-      out.writeln('  ${isFinal ? 'final' : ''} $fieldType ${field.name};');
-      out.writeln();
+      if (_isObservableScalarField(field)) {
+        final fieldType = _mutableFieldType(field);
+        out.writeln('  final Observable<$fieldType> _${field.name};');
+        out.writeln();
+        out.writeln('  @override');
+        out.writeln('  $fieldType get ${field.name} => _${field.name}.value;');
+        out.writeln('  set ${field.name}($fieldType value) => _${field.name}.value = value;');
+        out.writeln();
+      } else {
+        final fieldType = _mutableFieldType(field);
+        final isFinal = _isAlwaysFinal(field);
+        out.writeln('  @override');
+        out.writeln('  ${isFinal ? 'final' : ''} $fieldType ${field.name};');
+        out.writeln();
+      }
     }
 
     out.writeln('  $mutableName({');
     for (final field in fields) {
-      if (_needsCustomMutableInitializer(field.type)) {
-        out.writeln('    ${_mutableCtorParamType(field.type)} ${field.name},');
+      if (_needsCustomMutableInitializer(field)) {
+        out.writeln('    ${_mutableCtorParamType(field)} ${field.name},');
       } else {
         out.writeln('    required this.${field.name},');
       }
@@ -138,7 +163,7 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
 
     out.writeln('  $immutableName toImmutable() => $immutableName(');
     for (final field in fields) {
-      out.writeln('    ${field.name}: ${_mutableToImmutableExpr(_mutableShape(field.type), field.name)},');
+      out.writeln('    ${field.name}: ${_mutableToImmutableExprForField(field, field.name)},');
     }
     out.writeln('  );');
 
@@ -147,36 +172,58 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
     return out.toString();
   }
 
-  bool _needsCustomMutableInitializer(DartType type) {
-    final shape = _mutableShape(type);
-    return shape.kind == _TypeKind.list || shape.kind == _TypeKind.map;
+  bool _isObservableScalarField(_FieldInfo field) {
+    if (field.isImmutableField) return false;
+
+    final shape = _mutableShape(field.type);
+    if (shape.kind != _TypeKind.simple) return false;
+    if (shape.baseName.endsWith('Id')) return false;
+
+    return true;
+  }
+
+  bool _needsCustomMutableInitializer(_FieldInfo field) {
+    if (field.isImmutableField) return false;
+
+    final shape = _mutableShape(field.type);
+    return shape.kind == _TypeKind.list || shape.kind == _TypeKind.map || _isObservableScalarField(field);
   }
 
   String _mutableInitializers(List<_FieldInfo> fields) {
     final parts = <String>[];
 
     for (final field in fields) {
+      if (field.isImmutableField) continue;
+
       final shape = _mutableShape(field.type);
       if (shape.kind == _TypeKind.list) {
         parts.add('${field.name} = ArgsHelper.toMutableList(${field.name})');
       } else if (shape.kind == _TypeKind.map) {
         parts.add('${field.name} = ArgsHelper.toMutableMap(${field.name})');
+      } else if (_isObservableScalarField(field)) {
+        parts.add('_${field.name} = Observable(${field.name})');
       }
     }
 
     return parts.isEmpty ? '' : ' : ${parts.join(', ')}';
   }
 
-  bool _isAlwaysFinal(DartType type, String fieldName) {
-    final shape = _mutableShape(type);
+  bool _isAlwaysFinal(_FieldInfo field) {
+    if (field.isImmutableField) return true;
+
+    final shape = _mutableShape(field.type);
     if (shape.kind == _TypeKind.list || shape.kind == _TypeKind.map) return true;
     if (shape.baseName.endsWith('Id')) return true;
-    if (fieldName.endsWith('Id')) return true;
+    if (field.name.endsWith('Id')) return true;
     return false;
   }
 
-  String _mutableCtorParamType(DartType type) {
-    final shape = _mutableShape(type);
+  String _mutableCtorParamType(_FieldInfo field) {
+    if (_isObservableScalarField(field)) {
+      return 'required ${_mutableFieldType(field)}';
+    }
+
+    final shape = _mutableShape(field.type);
 
     if (shape.kind == _TypeKind.list) {
       return 'Iterable<${shape.args.single.render()}>?';
@@ -184,12 +231,18 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
     if (shape.kind == _TypeKind.map) {
       return 'Map<${shape.args[0].render()}, ${shape.args[1].render()}>?';
     }
-    return shape.render();
+
+    return _mutableFieldType(field);
   }
 
   String _immutableFieldType(DartType type) => _immutableShape(type).render();
 
-  String _mutableFieldType(DartType type) => _mutableShape(type).render();
+  String _mutableFieldType(_FieldInfo field) {
+    if (field.isImmutableField) {
+      return _immutableShape(field.type).render();
+    }
+    return _mutableShape(field.type).render();
+  }
 
   _ResolvedType _immutableShape(DartType type) {
     return _rewriteType(type, mode: _Mode.immutable);
@@ -356,6 +409,16 @@ class ImmutableMutableGenerator extends GeneratorForAnnotation<GenerateImmutable
     return _toJsonExpr(type, sourceExpr);
   }
 
+  String _immutableToMutableExprForField(_FieldInfo field, String sourceExpr) {
+    if (field.isImmutableField) return sourceExpr;
+    return _immutableToMutableExpr(_immutableShape(field.type), sourceExpr);
+  }
+
+  String _mutableToImmutableExprForField(_FieldInfo field, String sourceExpr) {
+    if (field.isImmutableField) return sourceExpr;
+    return _mutableToImmutableExpr(_mutableShape(field.type), sourceExpr);
+  }
+
   String _immutableToMutableExpr(_ResolvedType type, String sourceExpr) {
     if (type.isNullable) {
       final nonNull = type.nonNullable();
@@ -495,8 +558,9 @@ enum _TypeKind { simple, list, map }
 class _FieldInfo {
   final String name;
   final DartType type;
+  final bool isImmutableField;
 
-  _FieldInfo({required this.name, required this.type});
+  _FieldInfo({required this.name, required this.type, required this.isImmutableField});
 }
 
 class _ResolvedType {

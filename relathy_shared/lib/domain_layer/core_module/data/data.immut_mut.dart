@@ -7,6 +7,7 @@ part of 'data.dart';
 // ImmutableMutableGenerator
 // **************************************************************************
 
+@immutable
 class ImmutableRelathyData implements RelathyData {
   @override
   final UserId currentUserId;
@@ -89,6 +90,7 @@ class MutableRelathyData implements RelathyData {
   );
 }
 
+@immutable
 class ImmutableUserData implements UserData {
   @override
   final UserId userId;
@@ -145,25 +147,40 @@ class MutableUserData implements UserData {
   @override
   final UserId userId;
 
-  @override
-  String displayName;
+  final Observable<String> _displayName;
 
   @override
-  String? avatarUrl;
+  String get displayName => _displayName.value;
+  set displayName(String value) => _displayName.value = value;
+
+  final Observable<String?> _avatarUrl;
 
   @override
-  DateTime createdAt;
+  String? get avatarUrl => _avatarUrl.value;
+  set avatarUrl(String? value) => _avatarUrl.value = value;
+
+  final Observable<DateTime> _createdAt;
 
   @override
-  DateTime updatedAt;
+  DateTime get createdAt => _createdAt.value;
+  set createdAt(DateTime value) => _createdAt.value = value;
+
+  final Observable<DateTime> _updatedAt;
+
+  @override
+  DateTime get updatedAt => _updatedAt.value;
+  set updatedAt(DateTime value) => _updatedAt.value = value;
 
   MutableUserData({
     required this.userId,
-    required this.displayName,
-    required this.avatarUrl,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+    required String displayName,
+    required String? avatarUrl,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) : _displayName = Observable(displayName),
+       _avatarUrl = Observable(avatarUrl),
+       _createdAt = Observable(createdAt),
+       _updatedAt = Observable(updatedAt);
 
   ImmutableUserData toImmutable() => ImmutableUserData(
     userId: userId,
@@ -174,6 +191,7 @@ class MutableUserData implements UserData {
   );
 }
 
+@immutable
 class ImmutableRelationshipData implements RelationshipData {
   @override
   final RelationshipId relationshipId;
@@ -301,26 +319,44 @@ class MutableRelationshipData implements RelationshipData {
   @override
   final RelationshipId relationshipId;
 
-  @override
-  RelationshipKind kind;
+  final Observable<RelationshipKind> _kind;
 
   @override
-  RelationshipStatus status;
+  RelationshipKind get kind => _kind.value;
+  set kind(RelationshipKind value) => _kind.value = value;
+
+  final Observable<RelationshipStatus> _status;
 
   @override
-  String? title;
+  RelationshipStatus get status => _status.value;
+  set status(RelationshipStatus value) => _status.value = value;
+
+  final Observable<String?> _title;
 
   @override
-  String? description;
+  String? get title => _title.value;
+  set title(String? value) => _title.value = value;
+
+  final Observable<String?> _description;
+
+  @override
+  String? get description => _description.value;
+  set description(String? value) => _description.value = value;
 
   @override
   final UserId createdByUserId;
 
-  @override
-  DateTime createdAt;
+  final Observable<DateTime> _createdAt;
 
   @override
-  DateTime updatedAt;
+  DateTime get createdAt => _createdAt.value;
+  set createdAt(DateTime value) => _createdAt.value = value;
+
+  final Observable<DateTime> _updatedAt;
+
+  @override
+  DateTime get updatedAt => _updatedAt.value;
+  set updatedAt(DateTime value) => _updatedAt.value = value;
 
   @override
   final MutableMap<MemberId, MutableRelationshipMemberData> memberMap;
@@ -333,17 +369,23 @@ class MutableRelationshipData implements RelationshipData {
 
   MutableRelationshipData({
     required this.relationshipId,
-    required this.kind,
-    required this.status,
-    required this.title,
-    required this.description,
+    required RelationshipKind kind,
+    required RelationshipStatus status,
+    required String? title,
+    required String? description,
     required this.createdByUserId,
-    required this.createdAt,
-    required this.updatedAt,
+    required DateTime createdAt,
+    required DateTime updatedAt,
     Map<MemberId, MutableRelationshipMemberData>? memberMap,
     Map<AgreementId, MutableAgreementData>? agreementMap,
     Map<RequestId, MutableRequestData>? requestMap,
-  }) : memberMap = ArgsHelper.toMutableMap(memberMap),
+  }) : _kind = Observable(kind),
+       _status = Observable(status),
+       _title = Observable(title),
+       _description = Observable(description),
+       _createdAt = Observable(createdAt),
+       _updatedAt = Observable(updatedAt),
+       memberMap = ArgsHelper.toMutableMap(memberMap),
        agreementMap = ArgsHelper.toMutableMap(agreementMap),
        requestMap = ArgsHelper.toMutableMap(requestMap);
 
@@ -368,6 +410,7 @@ class MutableRelationshipData implements RelationshipData {
   );
 }
 
+@immutable
 class ImmutableRelationshipMemberData implements RelationshipMemberData {
   @override
   final MemberId memberId;
@@ -486,23 +529,38 @@ class MutableRelationshipMemberData implements RelationshipMemberData {
   @override
   final UserId userId;
 
-  @override
-  MembershipStatus status;
+  final Observable<MembershipStatus> _status;
 
   @override
-  MemberRole role;
+  MembershipStatus get status => _status.value;
+  set status(MembershipStatus value) => _status.value = value;
+
+  final Observable<MemberRole> _role;
+
+  @override
+  MemberRole get role => _role.value;
+  set role(MemberRole value) => _role.value = value;
 
   @override
   final UserId? invitedByUserId;
 
-  @override
-  DateTime invitedAt;
+  final Observable<DateTime> _invitedAt;
 
   @override
-  DateTime? respondedAt;
+  DateTime get invitedAt => _invitedAt.value;
+  set invitedAt(DateTime value) => _invitedAt.value = value;
+
+  final Observable<DateTime?> _respondedAt;
 
   @override
-  DateTime? joinedAt;
+  DateTime? get respondedAt => _respondedAt.value;
+  set respondedAt(DateTime? value) => _respondedAt.value = value;
+
+  final Observable<DateTime?> _joinedAt;
+
+  @override
+  DateTime? get joinedAt => _joinedAt.value;
+  set joinedAt(DateTime? value) => _joinedAt.value = value;
 
   @override
   final MutableMap<EssentialId, MutableEssentialData> essentialMap;
@@ -513,15 +571,20 @@ class MutableRelationshipMemberData implements RelationshipMemberData {
   MutableRelationshipMemberData({
     required this.memberId,
     required this.userId,
-    required this.status,
-    required this.role,
+    required MembershipStatus status,
+    required MemberRole role,
     required this.invitedByUserId,
-    required this.invitedAt,
-    required this.respondedAt,
-    required this.joinedAt,
+    required DateTime invitedAt,
+    required DateTime? respondedAt,
+    required DateTime? joinedAt,
     Map<EssentialId, MutableEssentialData>? essentialMap,
     Map<PreferenceId, MutablePreferenceData>? preferenceMap,
-  }) : essentialMap = ArgsHelper.toMutableMap(essentialMap),
+  }) : _status = Observable(status),
+       _role = Observable(role),
+       _invitedAt = Observable(invitedAt),
+       _respondedAt = Observable(respondedAt),
+       _joinedAt = Observable(joinedAt),
+       essentialMap = ArgsHelper.toMutableMap(essentialMap),
        preferenceMap = ArgsHelper.toMutableMap(preferenceMap);
 
   ImmutableRelationshipMemberData toImmutable() =>
@@ -543,6 +606,7 @@ class MutableRelationshipMemberData implements RelationshipMemberData {
       );
 }
 
+@immutable
 class ImmutableEssentialData implements EssentialData {
   @override
   final EssentialId essentialId;
@@ -625,34 +689,57 @@ class MutableEssentialData implements EssentialData {
   @override
   final EssentialId? parentEssentialId;
 
-  @override
-  String title;
+  final Observable<String> _title;
 
   @override
-  String? description;
+  String get title => _title.value;
+  set title(String value) => _title.value = value;
+
+  final Observable<String?> _description;
 
   @override
-  bool isBoundary;
+  String? get description => _description.value;
+  set description(String? value) => _description.value = value;
+
+  final Observable<bool> _isBoundary;
 
   @override
-  int sortOrder;
+  bool get isBoundary => _isBoundary.value;
+  set isBoundary(bool value) => _isBoundary.value = value;
+
+  final Observable<int> _sortOrder;
 
   @override
-  DateTime createdAt;
+  int get sortOrder => _sortOrder.value;
+  set sortOrder(int value) => _sortOrder.value = value;
+
+  final Observable<DateTime> _createdAt;
 
   @override
-  DateTime updatedAt;
+  DateTime get createdAt => _createdAt.value;
+  set createdAt(DateTime value) => _createdAt.value = value;
+
+  final Observable<DateTime> _updatedAt;
+
+  @override
+  DateTime get updatedAt => _updatedAt.value;
+  set updatedAt(DateTime value) => _updatedAt.value = value;
 
   MutableEssentialData({
     required this.essentialId,
     required this.parentEssentialId,
-    required this.title,
-    required this.description,
-    required this.isBoundary,
-    required this.sortOrder,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+    required String title,
+    required String? description,
+    required bool isBoundary,
+    required int sortOrder,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) : _title = Observable(title),
+       _description = Observable(description),
+       _isBoundary = Observable(isBoundary),
+       _sortOrder = Observable(sortOrder),
+       _createdAt = Observable(createdAt),
+       _updatedAt = Observable(updatedAt);
 
   ImmutableEssentialData toImmutable() => ImmutableEssentialData(
     essentialId: essentialId,
@@ -666,6 +753,7 @@ class MutableEssentialData implements EssentialData {
   );
 }
 
+@immutable
 class ImmutablePreferenceData implements PreferenceData {
   @override
   final PreferenceId preferenceId;
@@ -736,33 +824,56 @@ class MutablePreferenceData implements PreferenceData {
   @override
   final PreferenceId preferenceId;
 
-  @override
-  String title;
+  final Observable<String> _title;
 
   @override
-  String? description;
+  String get title => _title.value;
+  set title(String value) => _title.value = value;
+
+  final Observable<String?> _description;
 
   @override
-  String? category;
+  String? get description => _description.value;
+  set description(String? value) => _description.value = value;
+
+  final Observable<String?> _category;
 
   @override
-  int sortOrder;
+  String? get category => _category.value;
+  set category(String? value) => _category.value = value;
+
+  final Observable<int> _sortOrder;
 
   @override
-  DateTime createdAt;
+  int get sortOrder => _sortOrder.value;
+  set sortOrder(int value) => _sortOrder.value = value;
+
+  final Observable<DateTime> _createdAt;
 
   @override
-  DateTime updatedAt;
+  DateTime get createdAt => _createdAt.value;
+  set createdAt(DateTime value) => _createdAt.value = value;
+
+  final Observable<DateTime> _updatedAt;
+
+  @override
+  DateTime get updatedAt => _updatedAt.value;
+  set updatedAt(DateTime value) => _updatedAt.value = value;
 
   MutablePreferenceData({
     required this.preferenceId,
-    required this.title,
-    required this.description,
-    required this.category,
-    required this.sortOrder,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+    required String title,
+    required String? description,
+    required String? category,
+    required int sortOrder,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) : _title = Observable(title),
+       _description = Observable(description),
+       _category = Observable(category),
+       _sortOrder = Observable(sortOrder),
+       _createdAt = Observable(createdAt),
+       _updatedAt = Observable(updatedAt);
 
   ImmutablePreferenceData toImmutable() => ImmutablePreferenceData(
     preferenceId: preferenceId,
@@ -775,6 +886,7 @@ class MutablePreferenceData implements PreferenceData {
   );
 }
 
+@immutable
 class ImmutableAgreementData implements AgreementData {
   @override
   final AgreementId agreementId;
@@ -866,37 +978,57 @@ class MutableAgreementData implements AgreementData {
   @override
   final AgreementId agreementId;
 
-  @override
-  String title;
+  final Observable<String> _title;
 
   @override
-  String? description;
+  String get title => _title.value;
+  set title(String value) => _title.value = value;
+
+  final Observable<String?> _description;
 
   @override
-  AgreementStatus status;
+  String? get description => _description.value;
+  set description(String? value) => _description.value = value;
+
+  final Observable<AgreementStatus> _status;
+
+  @override
+  AgreementStatus get status => _status.value;
+  set status(AgreementStatus value) => _status.value = value;
 
   @override
   final MemberId createdByMemberId;
 
-  @override
-  DateTime createdAt;
+  final Observable<DateTime> _createdAt;
 
   @override
-  DateTime updatedAt;
+  DateTime get createdAt => _createdAt.value;
+  set createdAt(DateTime value) => _createdAt.value = value;
+
+  final Observable<DateTime> _updatedAt;
+
+  @override
+  DateTime get updatedAt => _updatedAt.value;
+  set updatedAt(DateTime value) => _updatedAt.value = value;
 
   @override
   final MutableMap<MemberId, MutableAgreementMemberDecisionData> decisionMap;
 
   MutableAgreementData({
     required this.agreementId,
-    required this.title,
-    required this.description,
-    required this.status,
+    required String title,
+    required String? description,
+    required AgreementStatus status,
     required this.createdByMemberId,
-    required this.createdAt,
-    required this.updatedAt,
+    required DateTime createdAt,
+    required DateTime updatedAt,
     Map<MemberId, MutableAgreementMemberDecisionData>? decisionMap,
-  }) : decisionMap = ArgsHelper.toMutableMap(decisionMap);
+  }) : _title = Observable(title),
+       _description = Observable(description),
+       _status = Observable(status),
+       _createdAt = Observable(createdAt),
+       _updatedAt = Observable(updatedAt),
+       decisionMap = ArgsHelper.toMutableMap(decisionMap);
 
   ImmutableAgreementData toImmutable() => ImmutableAgreementData(
     agreementId: agreementId,
@@ -912,6 +1044,7 @@ class MutableAgreementData implements AgreementData {
   );
 }
 
+@immutable
 class ImmutableAgreementMemberDecisionData
     implements AgreementMemberDecisionData {
   @override
@@ -965,21 +1098,32 @@ class MutableAgreementMemberDecisionData
   @override
   final MemberId memberId;
 
-  @override
-  AgreementDecisionStatus decision;
+  final Observable<AgreementDecisionStatus> _decision;
 
   @override
-  String? note;
+  AgreementDecisionStatus get decision => _decision.value;
+  set decision(AgreementDecisionStatus value) => _decision.value = value;
+
+  final Observable<String?> _note;
 
   @override
-  DateTime? decidedAt;
+  String? get note => _note.value;
+  set note(String? value) => _note.value = value;
+
+  final Observable<DateTime?> _decidedAt;
+
+  @override
+  DateTime? get decidedAt => _decidedAt.value;
+  set decidedAt(DateTime? value) => _decidedAt.value = value;
 
   MutableAgreementMemberDecisionData({
     required this.memberId,
-    required this.decision,
-    required this.note,
-    required this.decidedAt,
-  });
+    required AgreementDecisionStatus decision,
+    required String? note,
+    required DateTime? decidedAt,
+  }) : _decision = Observable(decision),
+       _note = Observable(note),
+       _decidedAt = Observable(decidedAt);
 
   ImmutableAgreementMemberDecisionData toImmutable() =>
       ImmutableAgreementMemberDecisionData(
@@ -990,6 +1134,7 @@ class MutableAgreementMemberDecisionData
       );
 }
 
+@immutable
 class ImmutableRequestData implements RequestData {
   @override
   final RequestId requestId;
@@ -1116,17 +1261,29 @@ class MutableRequestData implements RequestData {
   @override
   final MemberId createdByMemberId;
 
-  @override
-  String title;
+  final Observable<String> _title;
 
   @override
-  String description;
+  String get title => _title.value;
+  set title(String value) => _title.value = value;
+
+  final Observable<String> _description;
 
   @override
-  RequestStatus status;
+  String get description => _description.value;
+  set description(String value) => _description.value = value;
+
+  final Observable<RequestStatus> _status;
 
   @override
-  RequestPriority priority;
+  RequestStatus get status => _status.value;
+  set status(RequestStatus value) => _status.value = value;
+
+  final Observable<RequestPriority> _priority;
+
+  @override
+  RequestPriority get priority => _priority.value;
+  set priority(RequestPriority value) => _priority.value = value;
 
   @override
   final MutableList<MemberId> targetMemberIds;
@@ -1137,33 +1294,53 @@ class MutableRequestData implements RequestData {
   @override
   final EssentialId? relatedEssentialId;
 
-  @override
-  DateTime? dueAt;
+  final Observable<DateTime?> _dueAt;
 
   @override
-  DateTime? resolvedAt;
+  DateTime? get dueAt => _dueAt.value;
+  set dueAt(DateTime? value) => _dueAt.value = value;
+
+  final Observable<DateTime?> _resolvedAt;
 
   @override
-  DateTime createdAt;
+  DateTime? get resolvedAt => _resolvedAt.value;
+  set resolvedAt(DateTime? value) => _resolvedAt.value = value;
+
+  final Observable<DateTime> _createdAt;
 
   @override
-  DateTime updatedAt;
+  DateTime get createdAt => _createdAt.value;
+  set createdAt(DateTime value) => _createdAt.value = value;
+
+  final Observable<DateTime> _updatedAt;
+
+  @override
+  DateTime get updatedAt => _updatedAt.value;
+  set updatedAt(DateTime value) => _updatedAt.value = value;
 
   MutableRequestData({
     required this.requestId,
     required this.createdByMemberId,
-    required this.title,
-    required this.description,
-    required this.status,
-    required this.priority,
+    required String title,
+    required String description,
+    required RequestStatus status,
+    required RequestPriority priority,
     Iterable<MemberId>? targetMemberIds,
     required this.relatedAgreementId,
     required this.relatedEssentialId,
-    required this.dueAt,
-    required this.resolvedAt,
-    required this.createdAt,
-    required this.updatedAt,
-  }) : targetMemberIds = ArgsHelper.toMutableList(targetMemberIds);
+    required DateTime? dueAt,
+    required DateTime? resolvedAt,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) : _title = Observable(title),
+       _description = Observable(description),
+       _status = Observable(status),
+       _priority = Observable(priority),
+       targetMemberIds = ArgsHelper.toMutableList(targetMemberIds),
+       _dueAt = Observable(dueAt),
+       _resolvedAt = Observable(resolvedAt),
+       _createdAt = Observable(createdAt),
+       _updatedAt = Observable(updatedAt);
 
   ImmutableRequestData toImmutable() => ImmutableRequestData(
     requestId: requestId,
