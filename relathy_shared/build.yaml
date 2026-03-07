@@ -1,0 +1,13 @@
+targets:
+  $default:
+    builders:
+      relathy_shared|immutable_mutable:
+        enabled: true
+
+builders:
+  immutable_mutable:
+    import: "package:relathy_shared/codegen/builder.dart"
+    builder_factories: ["immutableMutableBuilder"]
+    build_extensions: {".dart": [".immut_mut.dart"]}
+    auto_apply: root_package
+    build_to: source
